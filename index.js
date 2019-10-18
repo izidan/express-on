@@ -27,10 +27,12 @@ if (app.get('env') !== 'test') {
     app.use(logger('dev'));
 };
 
+debug('expressit')(__dirname);
+
 // view engine setup
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views'));
-app.set('routes', process.env.ROUTES || './routes');
+app.set('views', process.env.VIEWS || path.join(__dirname, 'views'));
+app.set('routes', process.env.ROUTES || path.join(__dirname, 'routes'));
 
 app.use(cors());
 app.use(compression());
