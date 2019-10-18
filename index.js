@@ -60,12 +60,13 @@ if (!module.parent) {
 
     process.on('unhandledRejection', err => debug('app:error')('%O', err) && process.exit(1));
 
+    app.listen(app.get('port'), '0.0.0.0', () =>
+        debug('app:info')('express server listening on port %o', app.get('port')));
+
+    if (!!process.env.MONGODB) return;
     mongoose.connect(process.env.MONGODB || "mongodb://localhost/test")
         .then(db => debug('app:info')('connected to database [%s] successfully',
             db.name || (db.connections || mongoose.connections)[0].name))
         .catch(err => debug('app:error')('%O', err));
 
-    app.listen(app.get('port'), '0.0.0.0', () =>
-        debug('app:info')('express server listening on port %o', app.get('port')));
-}
-
+};
