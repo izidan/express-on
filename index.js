@@ -12,13 +12,12 @@ const path = require('path');
 
 express.Controller = require('./controller');
 
-
 const app = express();
 
 if (app.get('env') !== 'test') {
     require('dotenv').config();
     app.set('port', process.env.PORT);
-    app.use(logger('dev'));
+    app.use(logger(process.env.NODE_ENV || 'dev'));
 };
 
 // view engine setup
