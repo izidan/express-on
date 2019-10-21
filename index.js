@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const formatters = require('./formatters');
 const compression = require('compression');
 const errors = require('http-errors');
@@ -10,14 +12,6 @@ const path = require('path');
 
 express.Controller = require('./controller');
 
-// #region config
-mongoose.set('autoIndex', false);
-mongoose.set('autoReconnect', true);
-mongoose.set('useCreateIndex', true);
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useUnifiedTopology', true);
-mongoose.set('debug', (process.env.DEBUG || '').match(/(^|,)mongoose(\*|,|$)/));
-// #endregion
 
 const app = express();
 
@@ -64,6 +58,14 @@ if (!module.parent) {
         debug('app:info')('express server listening on port %o', app.get('port')));
 
     if (!process.env.MONGODB) return;
+
+    mongoose.set('autoIndex', false);
+    mongoose.set('autoReconnect', true);
+    mongoose.set('useCreateIndex', true);
+    mongoose.set('useNewUrlParser', true);
+    mongoose.set('useUnifiedTopology', true);
+    mongoose.set('debug', (process.env.DEBUG || '').match(/(^|,)mongoose(\*|,|$)/));
+
     mongoose.connect(process.env.MONGODB || "mongodb://localhost/test")
         .then(db => debug('app:info')('connected to database [%s] successfully',
             db.name || (db.connections || mongoose.connections)[0].name))
