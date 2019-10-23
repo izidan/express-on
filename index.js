@@ -56,7 +56,7 @@ if (!module.parent) {
         debug('app:info')('express server listening on port %o', app.get('port')));
 
     // only configure mongoose when a mongodb connection string exists
-    if (!process.env.MONGODB) return;
+    if (!process.env.MONGO_URI) return;
 
     const mongoose = require('mongoose');
 
@@ -67,7 +67,7 @@ if (!module.parent) {
     mongoose.set('useUnifiedTopology', true);
     mongoose.set('debug', (process.env.DEBUG || '').match(/(^|,)mongoose(\*|,|$)/));
 
-    mongoose.connect(process.env.MONGODB || "mongodb://localhost/test")
+    mongoose.connect(process.env.MONGO_URI || "mongodb://localhost/test")
         .then(db => debug('app:info')('connected to database [%s] successfully',
             db.name || (db.connections || mongoose.connections)[0].name))
         .catch(err => debug('app:error')('%O', err));
