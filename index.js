@@ -3,7 +3,6 @@
 const formatters = require('./formatters');
 const compression = require('compression');
 const errors = require('http-errors');
-const mongoose = require('mongoose');
 const express = require('express');
 const logger = require('morgan');
 const debug = require('debug');
@@ -56,7 +55,10 @@ if (!module.parent) {
     app.listen(app.get('port'), '0.0.0.0', () =>
         debug('app:info')('express server listening on port %o', app.get('port')));
 
+    // only configure mongoose when a mongodb connection string exists
     if (!process.env.MONGODB) return;
+
+    const mongoose = require('mongoose');
 
     mongoose.set('autoIndex', false);
     mongoose.set('autoReconnect', true);
@@ -69,5 +71,4 @@ if (!module.parent) {
         .then(db => debug('app:info')('connected to database [%s] successfully',
             db.name || (db.connections || mongoose.connections)[0].name))
         .catch(err => debug('app:error')('%O', err));
-
 };

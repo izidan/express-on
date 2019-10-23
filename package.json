@@ -1,10 +1,11 @@
 {
-  "name": "expressit",
+  "name": "express-it",
   "version": "1.0.0",
   "description": "Express + Controllers + Mongoose + Routes + CLI",
   "main": "index.js",
   "bin": {
-    "expressit": "./index.js"
+    "express-it": "./index.js",
+    "xprs": "./index.js"
   },
   "dependencies": {
     "compression": "^1.7.4",
@@ -22,17 +23,17 @@
     "express": "4.x"
   },
   "devDependencies": {
-    "mongoose": "5.x",
-    "express": "4.x"
+    "express": "4.x",
+    "mongoose": "^5.7.6"
   },
   "scripts": {
     "start": "node ."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/izidan/expressit.git"
+    "url": "git+https://github.com/izidan/express-it.git"
   },
   "author": "izidan",
   "license": "ISC",
-  "homepage": "https://github.com/izidan/expressit"
+  "homepage": "https://github.com/izidan/express-it"
 }
