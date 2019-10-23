@@ -47,6 +47,7 @@ class Controller {
         // construct query object
         qry = this.model.find(find).select(select).sort(sort);
         // apply lean whe possible
+        options = options.toJSON || options.toObject || {};
         if (!(options.virtuals || options.getters || options.transform))
             qry.lean({ autopopulate: true, defaults: true });
         if (!!count && JSON.parse(count) === true)
