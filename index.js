@@ -14,17 +14,17 @@ if (!module.parent) {
             .on('SIGINT', function () { process.emit('SIGINT'); });
 
     process.on('SIGINT', function () {
-        console.info('express server stopped'.red);
+        console.info(colors.red('express server stopped'));
         process.exit();
     });
 
     process.on('SIGTERM', function () {
-        console.info('express server stopped'.red);
+        console.info(colors.red('express server stopped'));
         process.exit();
     });
 
     app.listen(app.get('port'), '0.0.0.0', () =>
-        console.info(`express server listening on port ${app.get('port')}`.green));
+        console.info(colors.green(`express server listening on port ${app.get('port')}`)));
 
     // only configure mongoose when a mongodb connection string exists
     if (!!process.env.MONGO_URI) {
@@ -38,7 +38,7 @@ if (!module.parent) {
         mongoose.set('debug', (process.env.DEBUG || '').match(/(^|,)mongoose(\*|,|$)/));
         // connect with mongodb uri sepcified
         mongoose.connect(process.env.MONGO_URI || "mongodb://localhost/test")
-            .then(db => console.info(`connected to database [${db.name || (db.connections || mongoose.connections)[0].name}] successfully`.green))
+            .then(db => console.info(colors.green(`connected to database [${db.name || (db.connections || mongoose.connections)[0].name}] successfully`)))
             .catch(err => console.error(color.red(err)));
     }
 };
