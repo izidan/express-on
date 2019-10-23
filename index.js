@@ -38,7 +38,7 @@ if (!module.parent) {
         mongoose.set('debug', (process.env.DEBUG || '').match(/(^|,)mongoose(\*|,|$)/));
         // connect with mongodb uri sepcified
         mongoose.connect(process.env.MONGO_URI || "mongodb://localhost/test")
-            .then(db => console.info(colors.green(`connected to database [${db.name || (db.connections || mongoose.connections)[0].name}] successfully`)))
+            .then(db => console.info(colors.green(`mongoose connected to database [${db.name || (db.connections || mongoose.connections)[0].name}] successfully`)))
             .catch(err => console.error(color.red(err)));
     }
 };
