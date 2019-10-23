@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 const colors = require('colors/safe');
-module.exports = require('./app');
+const app = require('./app');
+
+module.exports = app;
 
 if (!module.parent) {
 
