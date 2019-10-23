@@ -65,6 +65,6 @@ const formatter = function (type, transform, prefix, suffix, delimiter) {
             callback();
         }, () => this.end(suffix && array === true ? suffix : undefined));
     };
-    this.send = data => data === undefined || data.constructor === Boolean ? stringify(data) :
-        [String, Buffer].includes(data.constructor) ? send(data) : stringify().end(data);
+    this.send = data => ['undefined', 'boolean'].includes(typeof data) ? stringify(data) :
+        ['string', 'buffer'].includes(typeof data) ? send(data) : stringify().end(data);
 };

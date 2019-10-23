@@ -40,7 +40,8 @@ app.use((err, req, res, next) => {
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     // render the error page
     res.status(err.status || 500);
-    res.render('error', e => res.send(e && e.message && e.message.indexOf('Failed to lookup view') !== -1) ? err : e)
+    res.render('error', (e, html) =>
+        res.send(html || (e && e.message && e.message.indexOf('Failed to lookup view') !== -1 ? err : e)))
 });
 
 module.exports = app;
