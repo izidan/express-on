@@ -1,9 +1,10 @@
 {
-  "name": "@izidan/express-it",
+  "name": "express-on",
   "version": "1.0.0",
   "description": "Express + Controllers + Mongoose + Routes + CLI",
   "main": "index.js",
   "bin": {
+    "express-on": "./index.js",
     "express-it": "./index.js",
     "xprs": "./index.js"
   },
@@ -27,10 +28,7 @@
   "scripts": {
     "start": "node ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/izidan/express-it.git"
-  },
+  "repository": "git@github.com:izidan/express-it.git",
   "author": "izidan",
   "license": "ISC",
   "homepage": "https://github.com/izidan/express-it"
