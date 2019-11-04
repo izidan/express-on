@@ -1,5 +1,5 @@
 {
-  "name": "express-it",
+  "name": "@izidan/express-it",
   "version": "1.0.0",
   "description": "Express + Controllers + Mongoose + Routes + CLI",
   "main": "index.js",
