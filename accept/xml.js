@@ -1,8 +1,15 @@
 const camelcase = require('camelcase-keys');
 const { toObject } = require('./../regex');
-const xml = require('fast-xml-parser');
+const { XMLParser, XMLBuilder } = require('fast-xml-parser');
 
-const parser = new xml.j2xParser({
+const parser = new XMLParser({
+    attrNodeName: false, attributeNamePrefix: '@', textNodeName: '@', cdataTagName: false,
+    trimValues: true, parseAttributeValue: false, parseNodeValue: false, parseTrueNumberOnly: true,
+    arrayMode: false, ignoreAttributes: false, ignoreNameSpace: false, allowBooleanAttributes: true,
+    parseTagValue: false,
+})
+
+const builder = new XMLBuilder({
     attrNodeName: false, attributeNamePrefix: '@', textNodeName: '@', cdataTagName: false,
     format: false, ignoreAttributes: false, ignoreNameSpace: false, supressEmptyNode: false,
     //attrValueProcessor: v => v && v.constructor.prototype.toJSON ? v.toJSON() : v,
@@ -10,14 +17,11 @@ const parser = new xml.j2xParser({
 });
 
 const parse = str => {
-    let obj = xml.parse(str, {
-        attrNodeName: false, attributeNamePrefix: '@', textNodeName: '@', cdataTagName: false,
-        trimValues: true, parseAttributeValue: false, parseNodeValue: false, parseTrueNumberOnly: true,
-        arrayMode: false, ignoreAttributes: false, ignoreNameSpace: false, allowBooleanAttributes: true,
-        attrValueProcessor: toObject, tagValueProcessor: toObject,
-    }, true);
+    let obj = parser.parse(str);
+    // force toJSON to handle custom parsing on values independent from the built-in parser
+    obj = JSON.parse(JSON.stringify(obj), (k, v) => toObject(v));
     //obj = Object.values(obj['xml'] || obj || {}).pop();
-    obj = Object.values(obj).pop();
+    obj = Object.values(obj).pop() || {};
     let keys = Object.keys(obj)
     if (keys.length === 1 && Array.isArray(obj[keys[0]]))
         obj = obj[keys[0]]
@@ -35,7 +39,8 @@ const stringify = function (obj) {
         obj['@id'] = obj._id;
         delete obj._id;
     }
-    return parser.parse({ [root]: obj }).replace(/<\/?@+>/g, '')
+    let str = builder.build({ [root]: obj });
+    return str.replace(/<\/?@+>/g, '')
 };
 
 module.exports = { parse, stringify };

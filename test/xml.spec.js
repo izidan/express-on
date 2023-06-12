@@ -1,4 +1,4 @@
-const xml = require('fast-xml-parser');
+const { XMLBuilder, XMLParser } = require('fast-xml-parser');
 
 const x2jOptions = {
     attrNodeName: false, attributeNamePrefix: "@", textNodeName: "@", cdataTagName: false,
@@ -11,21 +11,22 @@ const j2xOptions = {
     format: false, ignoreAttributes: false, ignoreNameSpace: false, supressEmptyNode: false,
 };
 
-describe.skip('xml parser', () => {
+describe('xml parser', () => {
 
-    it('correctly formats 0.0', () => {
-        let j2x = new xml.j2xParser(j2xOptions);
-        expect(j2x.parse({ number: 0.0 })).toEqual("<number>0</number>");
+    it('correctly format 0.0', () => {
+        let j2x = new XMLBuilder(j2xOptions);
+        expect(j2x.build({ number: 0.0 })).toEqual("<number>0</number>");
     });
 
     it('correctly parse "0.0" as a number 0', () => {
-        expect(xml.parse("<number>0.0</number>", x2jOptions)).toEqual({ number: 0 });
+        let x2j = new XMLParser(x2jOptions);
+        expect(x2j.parse("<number>0.0</number>")).toEqual({ number: 0 });
     });
 
-    it('correctly format date array', () => {
-        let j2x = new xml.j2xParser(j2xOptions);
+    xit('correctly format date array', () => {
+        let j2x = new XMLBuilder(j2xOptions);
         let dates = [new Date(2018, 1, 1), new Date(2019, 1, 1), new Date(2020, 1, 1)];
-        expect(j2x.parse({ dates: dates })).not.toEqual("<dates></dates><dates></dates><dates></dates>");
+        expect(j2x.build({ dates: dates })).not.toEqual("<dates></dates><dates></dates><dates></dates>");
     });
 
 });

@@ -1,4 +1,4 @@
-const j2csv = require('csv-stringify/lib/sync');
+const { stringify: j2csv } = require('csv-stringify/sync');
 const camelcase = require('camelcase-keys');
 const { toObject } = require('./../regex');
 const { PassThrough } = require('stream');
