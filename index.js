@@ -26,19 +26,19 @@ if (!module.parent || __dirname === process.cwd()) {
         process.exit();
     });
 
-    // only configure mongoose when a mongodb connection string exists
-    if (!!process.env.MONGO_URI) {
-        // configure default mongoose settings
-        mongoose.set('autoIndex', false);
-        mongoose.set('useCreateIndex', true);
-        mongoose.set('useNewUrlParser', true);
-        mongoose.set('useUnifiedTopology', true);
-        mongoose.set('debug', (process.env.DEBUG || '').match(/(^|,)mongoose(\*|,|$)/));
-        // connect with mongodb uri sepcified
+    // configure default mongoose settings
+    //try { mongoose.set('autoIndex', false) } catch (e) { }
+    //try { mongoose.set('strictQuery', false) } catch (e) { }
+    //try { mongoose.set('useCreateIndex', true) } catch (e) { }
+    //try { mongoose.set('useNewUrlParser', true) } catch (e) { }
+    //try { mongoose.set('useUnifiedTopology', true) } catch (e) { }
+    mongoose.set('debug', (process.env.DEBUG || '').match(/(^|,)mongoose(\*|,|$)/));
+
+    // connect with mongodb uri sepcified
+    if (!!process.env.MONGO_URI)
         mongoose.connect(process.env.MONGO_URI || "mongodb://localhost/test")
             .then(db => console.info(colors.green(`mongoose connected to database [${db.name || (db.connections || mongoose.connections)[0].name}] successfully`)))
             .catch(err => console.error(colors.red(err)));
-    }
 
     if (!!app.get('port'))
         module.exports = app.listen(app.get('port'), '0.0.0.0', () =>

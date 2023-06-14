@@ -6,14 +6,14 @@ let server;
 describe('Command line', () => {
     beforeAll(() => {
         console.info = info => infos.push(info);
-        process.env.MONGO_URI = global.__MONGO_URI__;
+        process.env.MONGO_URI = global.__MONGO_URI__ + global.__MONGO_DB_NAME__;
         process.env.PORT = 12345;
         server = require('../');
     });
-    afterAll((done) => {
+    afterAll(done => {
         delete process.env.PORT;
         delete process.env.MONGO_URI;
-        server.close(() => mongoose.disconnect(done));
+        server.close(() => mongoose.disconnect().then(done));
     });
     const request = () => supertest(server);
 

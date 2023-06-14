@@ -7,66 +7,48 @@ const { parser } = require('../../accept/csv');
 const Schema = mongoose.Schema;
 let server;
 
-mongoose.set('useCreateIndex', true);
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useUnifiedTopology', true);
-mongoose.set('debug', (process.env.DEBUG || '').match(/mongoose/));
-
 const Countries = new Schema({
-    _id: { type: String, alias: 'iso31661Alpha3' },
+    _id: { type: String, default: function () { return this.iso31661Alpha3 || this.m49 } },
     name: { type: String, alias: 'cldrDisplayName' },
     '@xsi:type': { type: String, default: 'Country' },
-    names: {
-        official: {
-            ar: { type: String, alias: 'officialNameAr' },
-            cn: { type: String, alias: 'officialNameCn' },
-            en: { type: String, alias: 'officialNameEn' },
-            es: { type: String, alias: 'officialNameEs' },
-            fr: { type: String, alias: 'officialNameFr' },
-            ru: { type: String, alias: 'officialNameRu' },
-        },
-        formal: {
-            ar: { type: String, alias: 'untermArabicFormal' },
-            cn: { type: String, alias: 'untermChineseFormal' },
-            en: { type: String, alias: 'untermEnglishFormal' },
-            fr: { type: String, alias: 'untermFrenchFormal' },
-            ru: { type: String, alias: 'untermRussianFormal' },
-            es: { type: String, alias: 'untermSpanishFormal' },
-        },
-        short: {
-            ar: { type: String, alias: 'untermArabicShort' },
-            cn: { type: String, alias: 'untermChineseShort' },
-            en: { type: String, alias: 'untermEnglishShort' },
-            fr: { type: String, alias: 'untermFrenchShort' },
-            ru: { type: String, alias: 'untermRussianShort' },
-            es: { type: String, alias: 'untermSpanishShort' },
-        }
-    },
     capital: String,
     continent: String,
-    iso: {
-        alpha2: { alias: 'iso31661Alpha2', type: String },
-        alpha3: { alias: 'iso31661Alpha3', type: String },
-        numeric: { alias: 'iso31661Numeric', type: Number }
-    },
-    currency: { type: [String], alias: 'iso4217CurrencyAlphabeticCode', set: v => v ? v.toString().split(',') : v },
-    languages: { type: [String], set: v => v ? v.toString().split(',') : v },
+    currency: { type: [String], default: undefined, alias: 'iso4217CurrencyAlphabeticCode', set: v => v ? v.toString().split(',') : v },
+    languages: { type: [String], default: undefined, set: v => v ? v.toString().split(',') : v },
     independent: { type: Object, alias: 'isIndependent' },
-    region: {
-        code: { type: Number, alias: 'regionCode' },
-        name: { type: String, alias: 'regionName' },
-        subCode: { type: Number, alias: 'subRegionCode' },
-        subName: { type: String, alias: 'subRegionName' },
-        intermediateCode: { type: Number, alias: 'intermediateRegionCode' },
-        intermediateName: { type: String, alias: 'intermediateRegionName' },
-    }
+    'iso.alpha2': { alias: 'iso31661Alpha2', type: String },
+    'iso.alpha3': { alias: 'iso31661Alpha3', type: String },
+    'iso.numeric': { alias: 'iso31661Numeric', type: Number },
+    'iso.currency.name': { type: String, alias: 'iso4217CurrencyName' },
+    'iso.currency.minorUnit': { type: String, alias: 'iso4217CurrencyMinorUnit' },
+    'iso.currency.countryName': { type: String, alias: 'iso4217CurrencyCountryName' },
+    'iso.currency.numericCode': { type: String, alias: 'iso4217CurrencyNumericCode' },
+    'region.code': { type: Number, alias: 'regionCode' },
+    'region.name': { type: String, alias: 'regionName' },
+    'region.subCode': { type: Number, alias: 'subRegionCode' },
+    'region.subName': { type: String, alias: 'subRegionName' },
+    'region.intermediateCode': { type: Number, alias: 'intermediateRegionCode' },
+    'region.intermediateName': { type: String, alias: 'intermediateRegionName' },
+    'names.official.ar': { type: String, alias: 'officialNameAr' },
+    'names.official.cn': { type: String, alias: 'officialNameCn' },
+    'names.official.en': { type: String, alias: 'officialNameEn' },
+    'names.official.es': { type: String, alias: 'officialNameEs' },
+    'names.official.fr': { type: String, alias: 'officialNameFr' },
+    'names.official.ru': { type: String, alias: 'officialNameRu' },
+    'names.formal.ar': { type: String, alias: 'untermArabicFormal' },
+    'names.formal.cn': { type: String, alias: 'untermChineseFormal' },
+    'names.formal.en': { type: String, alias: 'untermEnglishFormal' },
+    'names.formal.fr': { type: String, alias: 'untermFrenchFormal' },
+    'names.formal.ru': { type: String, alias: 'untermRussianFormal' },
+    'names.formal.es': { type: String, alias: 'untermSpanishFormal' },
+    'names.short.ar': { type: String, alias: 'untermArabicShort' },
+    'names.short.cn': { type: String, alias: 'untermChineseShort' },
+    'names.short.en': { type: String, alias: 'untermEnglishShort' },
+    'names.short.fr': { type: String, alias: 'untermFrenchShort' },
+    'names.short.ru': { type: String, alias: 'untermRussianShort' },
+    'names.short.es': { type: String, alias: 'untermSpanishShort' },
+    m49: Number,
     /*
-    iso4217CurrencyAlphabeticCode: undefined,
-    iso4217CurrencyCountryName: undefined,
-    iso4217CurrencyMinorUnit: undefined,
-    iso4217CurrencyName: undefined,
-    iso4217CurrencyNumericCode: undefined,
-    m49: 680,
     ds: undefined,
     developedDevelopingCountries: 'Developed',
     dial: undefined,
@@ -88,7 +70,7 @@ const Countries = new Schema({
     */
 }, { strict: false, versionKey: false });
 
-const Country = mongoose.model('country', Countries).findBy('iso31661Alpha3').select('-names');
+const Country = mongoose.model('country', Countries).select('-names');
 
 module.exports = {
     app: () => app,

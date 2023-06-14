@@ -194,9 +194,8 @@ describe('Queries', () => {
     request().get('/api/vegetables?explain=true')
       .expect(200)
       .then(({ body }) => {
-        expect(body).toHaveLength(1);
-        expect(body[0]).toHaveProperty('serverInfo');
-        expect(body[0]).toHaveProperty('queryPlanner');
-        expect(body[0]).toHaveProperty('executionStats');
+        expect(body).toHaveProperty('serverInfo');
+        expect(body).toHaveProperty('queryPlanner');
+        expect(body).toHaveProperty('executionStats');
       }));
 });

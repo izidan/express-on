@@ -17,7 +17,7 @@ describe('GET accept', () => {
         request().get('/api/countries?select=_id name')
             .query({ limit: 3, sort: '_id' })
             .accept('text/xml')
-            .expect(200, '<xml><object id="ABW"><name>Aruba</name></object><object id="AFG"><name>Afghanistan</name></object><object id="AGO"><name>Angola</name></object></xml>'))
+            .expect(200, '<xml><object id="680"></object><object id="ABW"><name>Aruba</name></object><object id="AFG"><name>Afghanistan</name></object></xml>'))
 
     it('get object in xml', () =>
         request().get('/api/countries/TWN?select=_id name')
@@ -46,7 +46,7 @@ describe('GET accept', () => {
         request().get('/api/countries?select=_id name')
             .query({ limit: 3, sort: '_id' })
             .accept('text/csv')
-            .expect(200, '_id,name\nABW,Aruba\nAFG,Afghanistan\nAGO,Angola\n'))
+            .expect(200, '_id\n680\n_id,name\nABW,Aruba\nAFG,Afghanistan\n'))
 
     it('get object in csv', () =>
         request().get('/api/countries/TWN?select=_id name')
@@ -78,7 +78,7 @@ describe('GET accept', () => {
         request().get('/api/countries?select=_id name')
             .query({ limit: 3, sort: '_id' })
             .accept('text/tsv')
-            .expect(200, '_id\tname\nABW\tAruba\nAFG\tAfghanistan\nAGO\tAngola\n'))
+            .expect(200, '_id\n680\n_id\tname\nABW\tAruba\nAFG\tAfghanistan\n'))
 
     it('get object in tsv', () =>
         request().get('/api/countries/TWN?select=_id name')

@@ -6,11 +6,6 @@ const Schema = mongoose.Schema;
 
 let server;
 
-mongoose.set('useCreateIndex', true);
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useUnifiedTopology', true);
-mongoose.set('debug', (process.env.DEBUG || '').match(/mongoose/));
-
 const Fungus = new Schema({ 'hyphenated-field-name': String });
 const Animal = new Schema({ name: String });
 const Mineral = new Schema({ color: String, enables: [{ type: Schema.ObjectId, ref: 'fungus' }] });

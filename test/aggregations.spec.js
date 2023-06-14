@@ -110,11 +110,10 @@ describe('aggregations', () => {
         request().get('/api/countries?aggregate={"$group":{"_id":"$continent","count":{"$sum":1}}}&explain=true')
             .expect(200)
             .then(({ body }) => {
-                expect(body).toHaveLength(1);
-                expect(body[0]).toHaveProperty('stages');
-                expect(body[0]).toHaveProperty('serverInfo');
-                expect(body[0].stages[0]).toHaveProperty('$cursor');
-                expect(body[0].stages[0].$cursor).toHaveProperty('queryPlanner');
-                expect(body[0].stages[0].$cursor).toHaveProperty('executionStats');
+                expect(body).toHaveProperty('stages');
+                expect(body).toHaveProperty('serverInfo');
+                expect(body.stages[0]).toHaveProperty('$cursor');
+                expect(body.stages[0].$cursor).toHaveProperty('queryPlanner');
+                expect(body.stages[0].$cursor).toHaveProperty('executionStats');
             }));
 })

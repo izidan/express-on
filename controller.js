@@ -82,6 +82,12 @@ class Controller {
         // correctly parse select nuerical values into valid ones
         return JSON.parse(JSON.stringify(select).replace(/:"(\d|true|false)"/gi, ':$1'));
     }
+    /**
+     * 
+     * @param {Object} qry the query object to cleanse
+     * @param {Object} opt the default query options 
+     * @returns cleanse query options
+     */
     params(qry, opt = {}) {
         opt = Object.assign({}, qry, opt);
         let { find = {}, select, limit = this.limit, skip = 0, count, distinct, sort = this.sort, explain, lean, aggregate } = opt;
@@ -170,10 +176,9 @@ class Controller {
                 qry.lean({ autopopulate: true, defaults: true });
             if (!res) return qry;
             if (!!distinct)
-                qry.distinct(distinct, (err, out = []) =>
-                    res.send(err || (count ? Array.isArray(out) ? out.length : out : sort === distinct ? out.sort() : out)));
+                qry.distinct(distinct).then(out => res.send(count ? Array.isArray(out) ? out.length : out : sort === distinct ? out.sort() : out)).catch(res.send);
             else if (count)
-                qry.countDocuments((err, count) => res.send(err || count));
+                qry.countDocuments().then(res.send).catch(res.send);
             else {
                 // only apply skip when valid
                 if (skip > 0)
@@ -186,8 +191,8 @@ class Controller {
                     qry.lean().explain();
                 // pipe query results into the response stream
                 let cur = qry.cursor();
-                cur.on('error', ex => res.send(BadRequest(ex.message)));
-                cur.pipe(res.send(limit !== 1));
+                cur.on('error', ex => ex.message === 'Cursor is exhausted' ? res.end() : res.send(BadRequest(ex.message)));
+                cur.pipe(res.send(!explain && limit !== 1));
             }
         } catch (ex) {
             if (res) return res.send(BadRequest(ex.message));
@@ -229,24 +234,22 @@ class Controller {
             // only apply limit when valid
             if (limit > 0)
                 qry.limit(limit)
-            qry = this.model.collection.aggregate(qry.pipeline(), { explain, allowDiskUse: true, batchSize: 100 })
+            qry = this.model.aggregate(qry.pipeline(), { explain, allowDiskUse: true })
             if (!res) return qry;
+            qry = qry.cursor({ batchSize: 100 })
             // pipe query results into the response stream
-            qry.on('error', ex => res.send(BadRequest(ex.message)));
+            qry.on('error', ex => ex.message === 'Cursor is exhausted' ? res.end() : res.send(BadRequest(ex.message)));
             if (count || !!distinct)
-                qry.next((err, doc) => {
-                    try {
-                        let { out = [] } = doc || {};
-                        res.send(err || (count ? Array.isArray(out) ? out.length : out : sort === distinct ? out.sort() : out))
-                    }
-                    catch (ex) { console.trace(ex) || res.send(BadRequest(ex.message)) }
-                })
+                qry.next().then(doc => {
+                    let { out = [] } = doc || {};
+                    res.send(count ? Array.isArray(out) ? out.length : out : sort === distinct ? out.sort() : out)
+                }).catch(res.send)
             else if (!lean && !explain)
                 qry.pipe(new Transform({
                     objectMode: true, transform: (doc, enc, cb) =>
                         (doc = new this.model(doc)).schema.s.hooks.execPost('find', doc, [doc], cb)
                 })).pipe(res.send(true))
-            else qry.pipe(res.send(true))
+            else qry.pipe(res.send(!explain))
         } catch (ex) {
             if (res) return res.send(BadRequest(ex.message));
             console.error(ex);
@@ -307,7 +310,7 @@ class Controller {
         if (Object.keys(qry._conditions).length === 0)
             return res.send(Forbidden('Must specify find criteria for the requested operation'));
         this.body(req.body, true).then(doc => qry.updateMany(doc))
-            .then(out => res.send(out.n || undefined))
+            .then(out => res.send(out.modifiedCount || undefined))
             .catch(err => res.send(UnprocessableEntity(err.message || err)));
     }
     /**
@@ -325,19 +328,19 @@ class Controller {
         let nInserted = 0;
         let ordered = !Array.isArray(req.body) || req.body.length === 1;
         this.model.insertMany(req.body, { ordered })
-            .then(out => ({ result: { nModified: (ids = out.map(o => o.get(_id))).length } }))
+            .then(out => ({ modifiedCount: (ids = out.map(o => o.get(_id))).length }))
             .catch(err => {
                 // E11000 duplicate key error
                 if (err.code !== 11000) throw err;
                 let { result } = err.result;
                 nInserted = result.nInserted;
-                ids = ids.concat(result.writeErrors.map(({ err }) => err.op[_id]).filter(id => !!id));
+                ids = ids.concat(result.writeErrors.map(({ err }) => err.op._id).filter(id => !!id));
                 let updates = result.writeErrors.map(({ err }) => ({ replaceOne: { filter: { _id: err.op._id }, replacement: err.op } }));
                 return this.model.bulkWrite(updates, { ordered });
             })
-            .then(out => nInserted += out.result.nModified)
+            .then(out => nInserted += out.modifiedCount)
             .then(count => res.set('Location', Array.isArray(req.body) ?
-                `${url}?${_id}=${ids.map(encodeURIComponent)}&limit=${count}` : `${url}/${ids.pop()}`)
+                `${url}?${_id}=${ids.map(encodeURIComponent)}&limit=${ids.length}` : `${url}/${ids.pop()}`)
                 .status(count > 0 ? 201 : 200).send(count))
             .catch(err => res.send(UnprocessableEntity(err.message || err)));
     }
@@ -403,7 +406,7 @@ class Controller {
         this.body(req.body, true).then(doc => this
             .query(req.query, undefined, Object.keys(opts).length > 0 ? opts : { find: { [this._id]: req.params.id } })
             .updateOne(doc))
-            .then(out => res.send(out.n || undefined))
+            .then(out => res.send(out.modifiedCount || undefined))
             .catch(err => res.send(UnprocessableEntity(err.message || err)));
     }
     /**
@@ -416,7 +419,7 @@ class Controller {
         this.body(req.body).then(doc => this
             .query(req.query, undefined, Object.keys(opts).length > 0 ? opts : { find: { [this._id]: req.params.id } })
             .replaceOne(doc))
-            .then(out => res.status(200).send(out.n || undefined))
+            .then(out => res.status(200).send(out.modifiedCount || undefined))
             .catch(err => res.send(UnprocessableEntity(err.message || err)));
     }
     // #endregion
