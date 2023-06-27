@@ -3,8 +3,15 @@ const { XML, CSV, YAML, JSON } = require('./accept');
 const { Transform } = require('stream');
 const express = require('express');
 
+express.static.mime.define({
+    'application/js': ['jsonp'],
+    'application/jsonp': ['jsonp'],
+    'application/javascript': ['jsonp'],
+});
+
 module.exports = () => (req, res, next) => {
     let formats = {
+        jsonp: formatter.bind(res, 'jsonp', JSON.stringify, req.query.callback + '([', '])', ',', next, true),
         json: formatter.bind(res, 'json', JSON.stringify, '[', ']', ',', next),
         csv: formatter.bind(res, 'csv', CSV.stringify, null, null, null, next),
         tsv: formatter.bind(res, 'csv', CSV.stringify, null, null, '\t', next),
@@ -14,10 +21,11 @@ module.exports = () => (req, res, next) => {
     formats = {
         'text/xml': formats.xml, 'text/tsv': formats.tsv, 'text/plain': formats.yml,
         'application/tsv': formats.tsv, 'application/csv': formats.csv, 'text/comma-separated-values': formats.csv,
+        'application/jsonp': formats.jsonp, 'application/js': formats.jsonp, 'application/javascript': formats.jsonp,
         yaml: formats.yml, text: formats.yml, txt: formats.yml, html: formats.xml, ...formats
     };
     // check if format is specified in the url and set the accept header accordingly
-    let content = (req.url.match(/(?!^[^\?]+)\.(xml|txt|yml|csv|tsv|json|text|yaml)(\?|$)/gi) || [])[0];
+    let content = (req.url.match(/(?!^[^\?]+)\.(xml|txt|yml|csv|tsv|json|text|yaml|jsonp|js)(\?|$)/gi) || [])[0];
     if (content) {
         req.url = req.url.replace(content, '?');
         req.headers.accept = express.static.mime.types[content.split(/[^\w]/)[1]];
@@ -49,7 +57,7 @@ module.exports = () => (req, res, next) => {
         .catch(ex => next(BadRequest(ex.message || ex)))
 };
 
-const formatter = function (type, transform, prefix, suffix, delimiter, next) {
+const formatter = function (type, transform, prefix, suffix, delimiter, next, force) {
     const response = this;
     let send = this.send.bind(this);
     let stringify = array => {
@@ -73,7 +81,7 @@ const formatter = function (type, transform, prefix, suffix, delimiter, next) {
                     doc = doc.map(obj => transform.call(response, obj, delimiter)).join((delimiter || '').trimLeft())
                         // fix exponential numbers representation from 1e-5 to 0.000001 with 100 digits max limit
                         .replace(/(?![:|>|,])\d[\d|\.]*e[-|\+]\d+/g, t => Number(t).toFixed(Math.min(100, t.length - 4 + Number(t.split('e-')[1]))));
-                    if (array === true) {
+                    if (array === true || force === true) {
                         // write prefix first
                         if (prefix && last === undefined)
                             response.write(prefix, enc);
@@ -100,7 +108,7 @@ const formatter = function (type, transform, prefix, suffix, delimiter, next) {
             },
             final() {
                 if (!response._header) response.type(type);
-                response.end(last !== undefined ? suffix && array === true ? suffix : undefined :
+                response.end(last !== undefined ? suffix && (array === true || force === true) ? suffix : undefined :
                     transform.call(response.status(404), NotFound().toJSON()))
             }
         });

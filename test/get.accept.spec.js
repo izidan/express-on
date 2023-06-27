@@ -123,22 +123,22 @@ describe('GET accept', () => {
             .accept('text/plain')
             .expect(200, '---\n- AF\n- AN\n- AS\n- EU\n- NA\n- OC\n- SA\n'))
 
-    xit('get distinct values in js/jsonp', () =>
-        request().get('/api/countries')
+    it('get distinct values in js/jsonp', () =>
+        request().get('/api/countries?callback=jsonp')
             .query({ distinct: 'continent' })
-            .accept('application/javascript')
-            .expect(200, 'jsonp(["AS","EU","AF","OC","NA","AN","SA"],{"string":"SA"})'))
+            .accept('application/jsonp')
+            .expect(200, 'jsonp(["AF","AN","AS","EU","NA","OC","SA"])'))
 
-    xit('get json array in js/jsonp', () =>
-        request().get('/api/countries?select=_id name')
+    it('get json array in js/jsonp', () =>
+        request().get('/api/countries?callback=jsonp&select=_id name')
             .query({ limit: 3 })
             .accept('application/javascript')
-            .expect(200, 'jsonp([{"_id":"TWN","name":"Taiwan"},{"_id":"AFG","name":"Afghanistan"},{"_id":"ALB","name":"Albania"}],{"_id":"ALB","name":"Albania"})'))
+            .expect(200, 'jsonp([{"_id":"TWN","name":"Taiwan"},{"_id":"AFG","name":"Afghanistan"},{"_id":"ALB","name":"Albania"}])'))
 
-    xit('get json object in js/jsonp', () =>
-        request().get('/api/countries/TWN?select=_id name')
+    it('get json object in js/jsonp', () =>
+        request().get('/api/countries/TWN?callback=jsonp&select=_id name')
             .accept('application/javascript')
-            .expect(200, 'jsonp({"_id":"TWN","name":"Taiwan"})'))
+            .expect(200, 'jsonp([{"_id":"TWN","name":"Taiwan"}])'))
 
     xit('get distinct values in msgpack/octet-stream', () =>
         request().get('/api/countries')
