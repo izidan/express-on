@@ -186,9 +186,9 @@ describe('Queries', () => {
         expect(body[0]).toHaveProperty('name', 'Turnip');
       }));
 
-  xit('should give a 400 if the query string is unpar using query operators with _id', () =>
+  it('should give a 400 if the query string is unpar using query operators with _id', () =>
     request().get('/api/vegetables?conditions={ \'_id\': { \'$gt\': \'111111111111111111111111\' } }')
-      .expect(400, /"message":"Unexpected token \' in JSON at position 2"/));
+      .expect(400, /"message":"Expected property name or '}' in JSON at position 2"/));
 
   it('allows explain on plurals', () =>
     request().get('/api/vegetables?explain=true')
