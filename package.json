@@ -42,7 +42,7 @@
     "jest-junit": "^16.0.0",
     "mongoose": "^7.2.4",
     "parse-link-header": "^2.0.0",
-    "supertest": "^6.1.6"
+    "supertest": "^7.0.0"
   },
   "scripts": {
     "start": "node .",
