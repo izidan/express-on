@@ -26,3 +26,10 @@ steps:
   condition: succeededOrFailed() # because otherwise we won't know what tests failed
   inputs:
     testResultsFiles: 'test-reports/junit.xml'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'supply npm test coverage to pipelines'
+  condition: succeededOrFailed() # because otherwise we won't know what tests failed
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: 'test-reports/clover.xml'
