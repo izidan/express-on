@@ -1,6 +1,6 @@
-require('mongodb');
-const app = require('../..');
-const mongoose = require('mongoose');
+import('mongodb');
+import mongoose from 'mongoose';
+import app from '../../index.js';
 
 const Schema = mongoose.Schema;
 let server;
@@ -42,7 +42,7 @@ mongoose.model('timeentry', Cheese, 'cheeses').plural('timeentries').findBy('nam
 mongoose.model('mean', Fiends, 'fiends').locking(true);
 mongoose.model('bal', Stores, 'stores').plural('baloo').findBy('name');
 
-module.exports = {
+export default {
   app: () => app,
   server: () => server,
   deinit: async () => {

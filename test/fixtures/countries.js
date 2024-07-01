@@ -1,8 +1,8 @@
-require('mongodb');
-const fs = require('fs');
-const mongoose = require('mongoose');
-const app = require('../..');
-const { parser } = require('../../accept/csv');
+import('mongodb');
+import fs from 'fs';
+import mongoose from 'mongoose';
+import app from '../../index.js';
+import { parser } from '../../accept/csv.js';
 
 const Schema = mongoose.Schema;
 let server;
@@ -72,7 +72,7 @@ const Countries = new Schema({
 
 const Country = mongoose.model('country', Countries).select('-names');
 
-module.exports = {
+export default {
     app: () => app,
     server: () => server,
     deinit: async () => {

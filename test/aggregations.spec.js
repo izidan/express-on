@@ -1,5 +1,5 @@
-const supertest = require('supertest');
-const fixture = require('./fixtures/countries');
+import supertest from 'supertest';
+import fixture from './fixtures/countries.js';
 
 describe('aggregations', () => {
     beforeAll(fixture.init);

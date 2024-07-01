@@ -1,10 +1,11 @@
-const { Controller, Router } = require('express');
-const mongoose = require('mongoose');
+import { Controller } from './controller.js';
+import { Router } from 'express';
+import mongoose from 'mongoose';
 
 const controllers = {};
 const router = Router();
 const controller = plural => controllers[plural] = controllers[plural] || overrides.call(
-    new Controller(Object.values(mongoose.models).filter(m => m.plural() === plural).pop() || plural), plural);
+    new Controller(Object.values(mongoose.models).find(m => m.plural() === plural) || plural), plural);
 
 const overrides = function (plural) {
     switch (plural) {
@@ -41,4 +42,4 @@ router.post('/:route/:plural', (req, res) => controller(req.params.plural).inser
 router.put('/:route/:plural', (req, res) => controller(req.params.plural).replaceMany(req, res));
 router.get('/:route/:plural', (req, res) => controller(req.params.plural).find(req, res));
 
-module.exports = router;
+export default router;

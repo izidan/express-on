@@ -1,6 +1,6 @@
-require('mongodb');
-const mongoose = require('mongoose');
-const app = require('../..');
+import('mongodb');
+import mongoose from 'mongoose';
+import app from '../../index.js';
 
 const Schema = mongoose.Schema;
 
@@ -45,7 +45,7 @@ mongoose.model('fungus', Fungus).plural('fungi').select('-hyphenated-field-name'
 mongoose.model('mineral', Mineral).sort('color');
 mongoose.model('animal', Animal);
 
-const fixture = module.exports = {
+const fixture = {
   app: () => app,
   server: () => server,
   deinit: async () => {
@@ -78,3 +78,5 @@ const fixture = module.exports = {
       });
   }
 };
+
+export default fixture;

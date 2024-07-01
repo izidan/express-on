@@ -1,6 +1,6 @@
-const supertest = require('supertest');
-const parselinks = require('parse-link-header');
-const fixture = require('./fixtures/vegetable');
+import supertest from 'supertest';
+import parselinks from 'parse-link-header';
+import fixture from './fixtures/vegetable.js';
 
 describe.skip('GET populate', () => {
     beforeAll(fixture.init);

@@ -63,18 +63,18 @@ Edit package.json to add start script:
 ```
 Create `models\currencies.js` with a basic Mongoose model:
 ```
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 let schema = new mongoose.Schema({
     _id: String,
     name: String,
     country: String
 });
-module.exports = mongoose.model('currency', schema,'currencies');
+export default mongoose.model('currency', schema,'currencies');
 ```
 Create `controllers\currencies.js` with a basic controller
 ```
-const Model = require('../models/currencies');
-const { Controller } = require('express');
+import Model from '../models/currencies.js';
+import { Controller } from 'express-on';
 
 class CurrenciesController extends Controller {
     constructor() {
@@ -109,7 +109,7 @@ module.exports = router;
 Configure mongodb connection string:
 >set MONGO_URI=mongodb://localhost/test
 
-Configure http port to liste on:
+Configure http port to listen on:
 >set PORT=80
 
 Start via

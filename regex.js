@@ -1,4 +1,4 @@
-const moment = require('moment');
+import moment from 'moment';
 
 const y = '[1-9][0-9]{3}';
 const m29 = '02';
@@ -21,23 +21,23 @@ const DMY = `^(?:(?:${d29})[-/](?:${m29})|(?:${d30})[-/](?:${m30})|(?:${d31})[-/
 const MDY = `^(?:(?:${m29})[-/](?:${d29})|(?:${m30})[-/](?:${d30})|(?:${m31})[-/](?:${d31}))[-/]${y}$`;
 //const ISO = `^${y}-(?:(?:${m29})-(?:${d29})|(?:${m30})-(?:${d30})|(?:${m31})-(?:${d31}))$`;
 
-const DATE = {
+export const DATE = {
     YMD: YMD.replace(/\[-\/\]/g, '[-/]?'),//`^${y}[-/]?(?:(?:${m29})[-/]?(?:${d29})|(?:${m30})[-/]?(?:${d30})|(?:${m31})[-/]?(?:${d31}))$`,
     DMY: DMY.replace(/\[-\/\]/g, '[-/]?'),//`^(?:(?:${d29})[-/]?(?:${m29})|(?:${d30})[-/]?(?:${m30})|(?:${d31})[-/]?(?:${m31}))[-/]?${y}$`,
     MDY: MDY.replace(/\[-\/\]/g, '[-/]?'),//`^(?:(?:${m29})[-/]?(?:${d29})|(?:${m30})[-/]?(?:${d30})|(?:${m31})[-/]?(?:${d31}))[-/]?${y}$`,
     ISO: `^${y}-(?:(?:${m29})-(?:${d29})|(?:${m30})-(?:${d30})|(?:${m31})-(?:${d31}))$`,
 };
 
-const TIME = {
+export const TIME = {
     HMS: `(?:${hh})(?:${mm})(?:${ss})(?:${ms})?(?:${zz})?`,
     ISO: `(?:${hh}):(?:${mm}):(?:${ss})(?:${ms})?(?:${zz})?`,
 };
 
-const ISO8601 = `^${DATE.ISO.substr(1, DATE.ISO.length - 2)}T${TIME.ISO}$`;
+export const ISO8601 = `^${DATE.ISO.substr(1, DATE.ISO.length - 2)}T${TIME.ISO}$`;
 
-const RFC822 = `^(?:\\s*(?:${day}),?\\s*)?(?:${month})\\s+(?:(?:${d29})|(?:${d30})|(?:${d31}))\\s+${y}\\s+${TIME.ISO}\\s+(?:${zone})`;
+export const RFC822 = `^(?:\\s*(?:${day}),?\\s*)?(?:${month})\\s+(?:(?:${d29})|(?:${d30})|(?:${d31}))\\s+${y}\\s+${TIME.ISO}\\s+(?:${zone})`;
 
-const toObject = v => 'string' === typeof v ?
+export const toObject = v => 'string' === typeof v ?
     v.match(ISO8601) || v.match(RFC822) ? new Date(v) :
         v.match(DATE.ISO) ? moment.utc(v, 'YYYY-MM-DD').toDate() :
             v.match(YMD) ? moment.utc(v, 'YYYY/MM/DD').toDate() :
@@ -48,11 +48,11 @@ const toObject = v => 'string' === typeof v ?
                                 v.match(/^(yes|no)$/i) ? Boolean(v.length - 2) :
                                     v.match(/^\s*$/) ? undefined : v : v
 
-const toDate = v => 'string' === typeof v ?
+export const toDate = v => 'string' === typeof v ?
     v.match(ISO8601) || v.match(RFC822) ? new Date(v) :
         v.match(DATE.ISO) ? moment.utc(v, 'YYYY-MM-DD').toDate() :
             v.match(DATE.YMD) ? moment.utc(v, 'YYYY/MM/DD').toDate() :
                 v.match(DATE.DMY) ? moment.utc(v, 'DD/MM/YYYY').toDate() :
                     v.match(DATE.MDY) ? moment.utc(v, 'MM/DD/YYYY').toDate() : undefined : undefined
 
-module.exports = Object.assign(RegExp, { RFC822, ISO8601, TIME, DATE, toObject, toDate })
+export default Object.assign(RegExp, { RFC822, ISO8601, TIME, DATE, toObject, toDate })

@@ -1,4 +1,4 @@
-const { XMLBuilder, XMLParser } = require('fast-xml-parser');
+import { XMLBuilder, XMLParser } from 'fast-xml-parser';
 
 const x2jOptions = {
     attrNodeName: false, attributeNamePrefix: "@", textNodeName: "@", cdataTagName: false,

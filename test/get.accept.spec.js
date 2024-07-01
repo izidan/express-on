@@ -1,6 +1,6 @@
-const supertest = require('supertest');
-//const msgpack = require('msgpack-lite');
-const fixture = require('./fixtures/countries');
+import supertest from 'supertest';
+//import msgpack from 'msgpack-lite';
+import fixture from './fixtures/countries.js';
 
 describe('GET accept', () => {
     beforeAll(fixture.init);

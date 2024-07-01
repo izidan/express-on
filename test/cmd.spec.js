@@ -1,14 +1,15 @@
-const supertest = require('supertest');
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import supertest from 'supertest';
+
 let infos = [];
 let server;
 
 describe('Command line', () => {
-    beforeAll(() => {
+    beforeAll(async () => {
         console.info = info => infos.push(info);
         process.env.MONGO_URI = global.__MONGO_URI__ + global.__MONGO_DB_NAME__;
         process.env.PORT = 12345;
-        server = require('../');
+        server = (await import('../index.js')).default;
     });
     afterAll(done => {
         delete process.env.PORT;

@@ -1,18 +1,20 @@
-const { Forbidden, BadRequest, UnprocessableEntity } = require('http-errors');
-const { Transform } = require('stream');
-const deepmerge = require('deepmerge');
+import { Transform } from 'stream';
+import deepmerge from 'deepmerge';
+import errors from 'http-errors';
+import mongoose from 'mongoose';
 
+const { Forbidden, BadRequest, UnprocessableEntity } = errors;
 /**
  * Base controller class where other controller inherits or
  * overrides pre defined and existing properties
  */
-class Controller {
+export class Controller {
     /**
      * @param {Model} model The default model object for the controller.
      * Will be required to create an instance of the controller
      */
     constructor(model) {
-        this.model = model = typeof model === 'string' ? require('mongoose').model(model) : model
+        this.model = model = typeof model === 'string' ? mongoose.model(model) : model
         if (!this.model || !this.model.schema)
             throw 'You must pass in a model or model name';
         let options = this.model.options || {};
@@ -425,4 +427,4 @@ class Controller {
     // #endregion
 }
 
-module.exports = Controller;
+export default Controller;

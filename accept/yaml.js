@@ -1,8 +1,8 @@
-const yaml = require('js-yaml');
+import yaml from 'js-yaml';
 
-const parse = str => yaml.load(str, { json: true })
+export const parse = str => yaml.load(str, { json: true })
 
-const stringify = obj =>
+export const stringify = obj =>
     yaml.dump(Array.isArray(obj) ? obj : !isNaN(obj) ? obj.toString() : [obj], { skipInvalid: true });
 
-module.exports = { stringify, parse };
+export default { stringify, parse };

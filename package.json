@@ -1,15 +1,19 @@
 {
   "name": "express-on",
-  "version": "2.0.0",
-  "description": "Mongoose + Express + Controllers + Routes + Formatters + Swagger + ReDoc + Command Line Interface",
-  "main": "index.js",
+  "version": "3.0.0",
+  "description": "Mongoose + Express + Controllers + Routes + Formatters + Swagger + ReDoc + CLI",
+  "exports": "./index.js",
+  "type": "module",
   "bin": {
     "express-on": "./index.js",
     "express-it": "./index.js",
     "xprs": "./index.js"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
-    "camelcase-keys": "^7.0.2",
+    "camelcase-keys": "^9.1.3",
     "colors": "^1.4.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
@@ -18,7 +22,7 @@
     "deepmerge": "^4.2.2",
     "dotenv": "^16.1.4",
     "fast-xml-parser": "^4.2.4",
-    "flat": "^5.0.2",
+    "flat": "^6.0.1",
     "http-errors": "^2.0.0",
     "js-yaml": "^4.1.0",
     "JSONStream": "^1.3.5",
@@ -47,7 +51,7 @@
   "scripts": {
     "start": "node .",
     "jest": "jest --ci --runInBand --coverage --detectOpenHandles",
-    "test": "node_modules/.bin/jest --ci --runInBand --coverage --detectOpenHandles"
+    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --ci --runInBand --coverage --detectOpenHandles"
   },
   "author": "izidan",
   "license": "ISC"

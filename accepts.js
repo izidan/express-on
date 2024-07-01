@@ -1,7 +1,9 @@
-const { NotFound, BadRequest, UnsupportedMediaType } = require('http-errors');
-const { XML, CSV, YAML, JSON } = require('./accept');
-const { Transform } = require('stream');
-const express = require('express');
+import { XML, CSV, YAML, JSON } from './accept/index.js';
+import { Transform } from 'stream';
+import errors from 'http-errors';
+import express from 'express';
+
+const { NotFound, BadRequest, UnsupportedMediaType } = errors;
 
 express.static.mime.define({
     'application/js': ['jsonp'],
@@ -9,7 +11,7 @@ express.static.mime.define({
     'application/javascript': ['jsonp'],
 });
 
-module.exports = () => (req, res, next) => {
+export default () => (req, res, next) => {
     let formats = {
         jsonp: formatter.bind(res, 'jsonp', JSON.stringify, req.query.callback + '([', '])', ',', next, true),
         json: formatter.bind(res, 'json', JSON.stringify, '[', ']', ',', next),

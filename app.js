@@ -1,30 +1,33 @@
-const compression = require('compression');
-const errors = require('http-errors');
-const accepts = require('./accepts');
-const express = require('express');
-const logger = require('morgan');
-const yaml = require('js-yaml');
-const cors = require('cors');
-const path = require('path');
-const fs = require('fs');
+import accepts from './accepts.js';
+import compression from 'compression';
+import { fileURLToPath } from 'url';
+import errors from 'http-errors';
+import { dirname } from 'path';
+import express from 'express';
+import logger from 'morgan';
+import yaml from 'js-yaml';
+import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
 
-express.Controller = require('./controller');
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const maxAge = 3600000;
 const app = express();
 
-if (app.get('env') !== 'test') {
-    require('dotenv').config();
-    app.use(logger('dev'));
-    app.use(compression());
-    app.use(cors());
-};
+if (app.get('env') !== 'test')
+    import('dotenv').then(dotenv => {
+        dotenv.config();
+        app.use(logger('dev'));
+        app.use(compression());
+        app.use(cors());
+    });
 
 // view engine setup
 app.set('view engine', 'pug');
+app.set('routes', './routes.js');
 app.set('port', process.env.PORT);
 app.set('views', path.join(process.cwd(), 'views'));
-app.set('routes', path.join(process.cwd(), 'routes'));
 app.set('statics', path.join(process.cwd(), 'public'));
 
 app.use(express.urlencoded({ extended: true }));
@@ -34,7 +37,8 @@ app.use(express.static(app.get('statics'), { maxAge }));
 app.use(express.text({ limit: '64mb', type: ['*/plain', '*/text', '*/yaml', '*/txt', '*/yml', '*/xml'] }));
 app.use(accepts());
 app.head('*', (req, res) => res.status(204).end());
-app.use('/', require(app.get('routes')));
+//import(app.get('routes')).then(router => app.use('/', router.default));
+app.use('/', (await import(app.get('routes'))).default);
 app.get('/favicon.ico', (req, res) => res.status(410).end());
 // static handler for redoc ui
 app.get(/redoc\.html?/, (req, res) => res.sendFile(__dirname + '/public/redoc.html', { maxAge, headers: { 'Content-Type': 'text/html' } }));
@@ -59,4 +63,4 @@ app.use((err, req, res, nxt) => {
         res.status(err.status || 500).send(err.toJSON());
 });
 
-module.exports = app;
+export default app;

@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const supertest = require('supertest');
-const fixture = require('./fixtures/controller');
-const Controller = require('express').Controller;
+import mongoose from 'mongoose';
+import supertest from 'supertest';
+import Controller from '../controller.js';
+import fixture from './fixtures/controller.js';
 
 describe('Controllers', () => {
   beforeAll(fixture.init);

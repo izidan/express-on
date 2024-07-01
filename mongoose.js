@@ -1,15 +1,15 @@
-const unflatten = require('flat').unflatten;
-const mongoose = require('mongoose');
-const yaml = require('js-yaml');
+import { unflatten } from 'flat';
+import mongoose from 'mongoose';
+import yaml from 'js-yaml';
 
 const { Schema, SchemaType, VirtualType } = mongoose;
 const refs = { '#/definitions/': {}, '#/components/schemas/': {} };
 
-const { toDate } = require('./regex');
+import { toDate } from './regex.js';
 const supercast = mongoose.Date.cast();
 mongoose.Date.cast(v => supercast(v instanceof Date ? v : toDate(`${v}`) || v));
 
-module.exports = mongoose;
+export default mongoose;
 
 let { explicit, compiledExplicit, compiledTypeMap } = (yaml.Schema.create || yaml.DEFAULT_SCHEMA.extend).call(yaml, [
     new yaml.Type('tag:yaml.org,2002:definitions', {

@@ -1,7 +1,7 @@
-const fs = require('fs');
-const supertest = require('supertest');
-const camelcase = require('camelcase-keys');
-const fixture = require('./fixtures/countries');
+import fs from 'fs';
+import supertest from 'supertest';
+import camelcase from 'camelcase-keys';
+import fixture from './fixtures/countries.js';
 
 describe('PUT plural', () => {
     beforeAll(fixture.init);

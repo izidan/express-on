@@ -1,17 +1,17 @@
-const { stringify: j2csv } = require('csv-stringify/sync');
-const camelcase = require('camelcase-keys');
-const { toObject } = require('./../regex');
-const { PassThrough } = require('stream');
-const csv = require('csv-parser');
-const flatten = require('flat');
+import { stringify as j2csv } from 'csv-stringify/sync';
+import { toObject } from './../regex.js';
+import camelcase from 'camelcase-keys';
+import { PassThrough } from 'stream';
+import { flatten } from 'flat';
+import csv from 'csv-parser';
 
-const parser = (separator = ',') => csv({
+export const parser = (separator = ',') => csv({
     mapHeaders: ({ header }) => Object.keys(camelcase({ [header.replace(/\(|\)|\[|\]|\\|\/|{|}/g, ' ')]: header }))[0],
     mapValues: ({ value }) => toObject(value),
     separator
 })
 
-const parse = function (str, out = []) {
+export const parse = function (str, out = []) {
     // this refers to the request object
     let type = (this.headers || {})['content-type'];
     let stream = this.pipe ? this : new PassThrough().end(Buffer.from(str));
@@ -22,7 +22,7 @@ const parse = function (str, out = []) {
         .on('end', () => resolve(out)))
 }
 
-const stringify = function (obj, delimiter = ',') {
+export const stringify = function (obj, delimiter = ',') {
     let options = {
         delimiter,
         cast: { date: v => JSON.parse(JSON.stringify((v))) },
@@ -40,4 +40,4 @@ const stringify = function (obj, delimiter = ',') {
     return output.trimLeft().replace(/,"$/gm, '')
 };
 
-module.exports = { stringify, parse, parser };
+export default { stringify, parse, parser };

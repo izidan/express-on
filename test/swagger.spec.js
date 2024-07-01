@@ -1,6 +1,6 @@
-const fs = require('fs');
-const supertest = require('supertest');
-const fixture = require('./fixtures/vegetable');
+import fs from 'fs';
+import supertest from 'supertest';
+import fixture from './fixtures/vegetable.js';
 
 describe('GET swagger', () => {
     beforeAll(fixture.init);

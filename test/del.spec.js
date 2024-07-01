@@ -1,5 +1,5 @@
-const supertest = require('supertest');
-const fixture = require('./fixtures/vegetable');
+import supertest from 'supertest';
+import fixture from './fixtures/vegetable.js';
 
 describe('DELETE singular', () => {
   beforeAll(fixture.init);

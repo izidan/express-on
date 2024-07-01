@@ -1,6 +1,6 @@
-const camelcase = require('camelcase-keys');
-const { toObject } = require('./../regex');
-const { XMLParser, XMLBuilder } = require('fast-xml-parser');
+import camelcase from 'camelcase-keys';
+import { toObject } from './../regex.js';
+import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 
 const parser = new XMLParser({
     attrNodeName: false, attributeNamePrefix: '@', textNodeName: '@', cdataTagName: false,
@@ -16,7 +16,7 @@ const builder = new XMLBuilder({
     //tagValueProcessor: v => v && v.constructor.prototype.toJSON ? v.toJSON() : v
 });
 
-const parse = str => {
+export const parse = str => {
     let obj = parser.parse(str);
     // force toJSON to handle custom parsing on values independent from the built-in parser
     obj = JSON.parse(JSON.stringify(obj), (k, v) => toObject(v));
@@ -28,7 +28,7 @@ const parse = str => {
     return obj ? camelcase(obj, { deep: true }) : obj;
 };
 
-const stringify = function (obj) {
+export const stringify = function (obj) {
     // force toJSON and date transformation in arrays
     obj = JSON.parse(JSON.stringify(obj));
     let root = (obj['@xsi:type'] || this.locals.xml || typeof obj).split(':').pop();
@@ -43,4 +43,4 @@ const stringify = function (obj) {
     return str.replace(/<\/?@+>/g, '')
 };
 
-module.exports = { parse, stringify };
+export default { parse, stringify };
