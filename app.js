@@ -1,5 +1,5 @@
+import { fileURLToPath, pathToFileURL } from 'url';
 import compression from 'compression';
-import { fileURLToPath } from 'url';
 import accepts from './accepts.js';
 import errors from 'http-errors';
 import { dirname } from 'path';
@@ -25,7 +25,6 @@ if (app.get('env') !== 'test')
 
 // view engine setup
 app.set('view engine', 'pug');
-app.set('routes', './routes.js');
 app.set('port', process.env.PORT);
 app.set('views', path.join(process.cwd(), 'views'));
 app.set('statics', path.join(process.cwd(), 'public'));
@@ -37,8 +36,10 @@ app.use(express.static(app.get('statics'), { maxAge }));
 app.use(express.text({ limit: '64mb', type: ['*/plain', '*/text', '*/yaml', '*/txt', '*/yml', '*/xml'] }));
 app.use(accepts());
 app.head('*', (req, res) => res.status(204).end());
-//import(app.get('routes')).then(router => app.use('/', router.default));
-app.use('/', (await import(app.get('routes'))).default);
+
+await import(pathToFileURL(path.join(process.cwd(), 'routes.js'))).then(routes => app.use('/', routes.default)).catch(() =>
+    import(pathToFileURL(path.join(process.cwd(), 'routes', 'index.js'))).then(routes => app.use('/', routes.default)));
+
 app.get('/favicon.ico', (req, res) => res.status(410).end());
 // static handler for redoc ui
 app.get(/redoc\.html?/, (req, res) => res.sendFile(__dirname + '/public/redoc.html', { maxAge, headers: { 'Content-Type': 'text/html' } }));
