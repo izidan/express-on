@@ -64,31 +64,34 @@ Edit package.json to add start script:
 Create `models\currencies.js` with a basic Mongoose model:
 ```
 import mongoose from 'mongoose'
+
 let schema = new mongoose.Schema({
     _id: String,
     name: String,
     country: String
 });
-export default mongoose.model('currency', schema,'currencies');
+
+const Model = mongoose.model('currency', schema, 'currencies');
+export default Model;
 ```
 Create `controllers\currencies.js` with a basic controller
 ```
+import { Controller } from 'express-on/controller';
 import Model from '../models/currencies.js';
-import { Controller } from 'express-on';
 
-class CurrenciesController extends Controller {
+export class CurrenciesController extends Controller {
     constructor() {
         super(Model)
     }
 }
 
-module.exports = CurrenciesController;
+export default CurrenciesController;
 ```
 
 Create `routers\index.js` to bind http routes to controller methods
 ```
-const Controller = require('../controllers/currencies');
-const { Router } = require('express');
+import Controller from '../controllers/currencies.js';
+import { Router } from 'express';
 
 const controller = new Controller();
 const router = Router();
@@ -104,7 +107,7 @@ router.post('/currencies/', controller.insertMany.bind(controller));
 router.put('/currencies/', controller.replaceMany.bind(controller));
 router.get('/currencies/', controller.find.bind(controller));
 
-module.exports = router;
+export default router;
 ```
 Configure mongodb connection string:
 >set MONGO_URI=mongodb://localhost/test
@@ -113,4 +116,4 @@ Configure http port to listen on:
 >set PORT=80
 
 Start via
->npm start
+>node .
