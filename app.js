@@ -1,6 +1,6 @@
-import accepts from './accepts.js';
 import compression from 'compression';
 import { fileURLToPath } from 'url';
+import accepts from './accepts.js';
 import errors from 'http-errors';
 import { dirname } from 'path';
 import express from 'express';

@@ -2,7 +2,11 @@
   "name": "express-on",
   "version": "3.0.0",
   "description": "Mongoose + Express + Controllers + Routes + Formatters + Swagger + ReDoc + CLI",
-  "exports": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./app": "./app.js",
+    "./controller": "./controller.js"
+  },
   "type": "module",
   "bin": {
     "express-on": "./index.js",
