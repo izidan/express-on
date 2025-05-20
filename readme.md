@@ -88,7 +88,7 @@ export class CurrenciesController extends Controller {
 export default CurrenciesController;
 ```
 
-Create `routers\index.js` to bind http routes to controller methods
+Create `routes\index.js` to bind http routes to controller methods
 ```
 import Controller from '../controllers/currencies.js';
 import { Router } from 'express';
