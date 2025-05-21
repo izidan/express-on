@@ -18,6 +18,7 @@ const app = express();
 if (app.get('env') !== 'test')
     import('dotenv').then(dotenv => {
         dotenv.config();
+        app.set('port', process.env.PORT);
         app.use(logger('dev'));
         app.use(compression());
         app.use(cors());
