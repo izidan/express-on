@@ -51,6 +51,9 @@ if (isThisFileBeingRunViaCLI || __dirname === process.cwd()) {
             .catch(err => console.error(colors.red(err)));
     //else throw console.error(colors.red('Please set MONGO_URI=mongodb://<connection-string>')) || 'Invalid configuration'
 
+    if (!!process.env.PORT)
+        app.set('port', process.env.PORT)
+
     if (!!app.get('port'))
         server = app.listen(app.get('port'), '0.0.0.0', () =>
             console.info(colors.green(`express server listening on port ${app.get('port')}`)));
