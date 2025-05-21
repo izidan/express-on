@@ -19,7 +19,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let server = app;
 
-if (isThisFileBeingRunViaCLI || __dirname === process.cwd()) {
+if (isThisFileBeingRunViaCLI || __dirname === process.cwd() || __dirname === process.env.pm_exec_path) {
 
     process.on('unhandledRejection', err => log(err));
     process.on('unhandledException', err => log(err));
