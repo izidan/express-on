@@ -47,7 +47,10 @@ if (isThisFileBeingRunViaCLI || __dirname === process.cwd()) {
     // connect with mongodb uri sepcified
     if (!!process.env.MONGO_URI)
         mongoose.connect(process.env.MONGO_URI || "mongodb://localhost/test")
-            .then(db => console.info(colors.green(`mongoose connected to database [${db.name || (db.connections || mongoose.connections)[0].name}] successfully`)))
+            .then(db => console.info(colors.green(`mongoose connected to database [${db.name
+                || (db.connections || mongoose.connections)[0].name
+                || (db.connections || mongoose.connections)[0].client.options.dbName
+                }] successfully`)))
             .catch(err => console.error(colors.red(err)));
     //else throw console.error(colors.red('Please set MONGO_URI=mongodb://<connection-string>')) || 'Invalid configuration'
 
