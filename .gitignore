@@ -5,3 +5,4 @@ test-*/*
 !test-*/.gitignore
 globalConfig.json
 swagger.json
+.env

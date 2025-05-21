@@ -2,7 +2,9 @@ import { Transform } from 'stream';
 import deepmerge from 'deepmerge';
 import errors from 'http-errors';
 import mongoose from 'mongoose';
+import debug from 'debug'
 
+const error = debug('express:controller');
 const { Forbidden, BadRequest, UnprocessableEntity } = errors;
 /**
  * Base controller class where other controller inherits or
@@ -198,7 +200,7 @@ export class Controller {
             }
         } catch (ex) {
             if (res) return res.send(BadRequest(ex.message));
-            console.error(ex);
+            error(ex);
             throw ex;
         }
     }
@@ -254,7 +256,7 @@ export class Controller {
             else qry.pipe(res.send(!explain))
         } catch (ex) {
             if (res) return res.send(BadRequest(ex.message));
-            console.error(ex);
+            error(ex);
             throw ex;
         }
     }
