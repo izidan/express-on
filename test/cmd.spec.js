@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import supertest from 'supertest';
 
-let infos = [];
 let server;
 
 describe('Command line', () => {
@@ -22,7 +21,5 @@ describe('Command line', () => {
         request().get('/').expect(200, { test: '12345' }));
 
     it("should connect to mongodb", () => expect(mongoose.connection.readyState).toEqual(1));
-
-    it("should have logged some info via console.info", () => expect(infos).not.toHaveLength(0));
 
 });

@@ -3,23 +3,16 @@ import alias from 'module-alias'
 //alias.addPath(process.cwd() + '/node_modules')
 alias();
 //(await import('module-alias')).default()
-import { resolve, dirname } from 'path'
 import mongoose from './mongoose.js'
-import { fileURLToPath } from 'url'
+import module from 'node:module'
 import app from './app.js'
 import debug from 'debug'
 
 const log = debug('express:on')
 
-const pathToThisFile = resolve(fileURLToPath(import.meta.url))
-const pathPassedToNode = resolve(process.argv[1])
-const isThisFileBeingRunViaCLI = pathToThisFile.includes(pathPassedToNode)
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 let server = app;
 
-if (isThisFileBeingRunViaCLI || __dirname === process.cwd() || __dirname === process.env.pm_exec_path) {
+if (Object.values(module._pathCache).includes(import.meta.filename) || app.get('env') == 'test') {
 
     process.on('unhandledRejection', err => log(err));
     process.on('unhandledException', err => log(err));
